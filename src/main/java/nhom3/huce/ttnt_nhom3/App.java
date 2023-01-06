@@ -4,11 +4,21 @@
  */
 package nhom3.huce.ttnt_nhom3;
 
+import ParserFile.ParserFile;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Vector;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author MAI NGOC DOAN
  */
-public class App extends javax.swing.JFrame {
+public class App extends javax.swing.JFrame implements Subject{
 
     /**
      * Creates new form App
@@ -75,11 +85,13 @@ public class App extends javax.swing.JFrame {
 
         jPanel1.setLayout(new java.awt.GridLayout(2, 0));
 
-        jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 5));
+        jPanel4.setMinimumSize(new java.awt.Dimension(447, 74));
+        jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         jLabel2.setText("Start");
         jPanel4.add(jLabel2);
 
+        jStartBox.setMinimumSize(new java.awt.Dimension(100, 27));
         jPanel4.add(jStartBox);
 
         jLabel1.setText("Destination");
@@ -89,9 +101,16 @@ public class App extends javax.swing.JFrame {
 
         jLabel4.setText("Depth");
         jPanel4.add(jLabel4);
+
+        jDepthText.setColumns(5);
         jPanel4.add(jDepthText);
 
         jSearchingBtn.setText("Go");
+        jSearchingBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jSearchingBtnActionPerformed(evt);
+            }
+        });
         jPanel4.add(jSearchingBtn);
 
         jPanel1.add(jPanel4);
@@ -100,6 +119,11 @@ public class App extends javax.swing.JFrame {
 
         jImportGraphBtn.setText("Import");
         jImportGraphBtn.setActionCommand("");
+        jImportGraphBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jImportGraphBtnActionPerformed(evt);
+            }
+        });
         jPanel6.add(jImportGraphBtn);
 
         jPanel1.add(jPanel6);
@@ -115,17 +139,14 @@ public class App extends javax.swing.JFrame {
 
         jProcessTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
-                "Step", "Current Node", "Children", "Open", "Close"
+                "Step", "Current Node", "Depth", "Children", "Open", "Close"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, true, true
+                false, false, true, false, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -139,7 +160,52 @@ public class App extends javax.swing.JFrame {
         getContentPane().add(jPanel5, java.awt.BorderLayout.CENTER);
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jSearchingBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSearchingBtnActionPerformed
+        
+        if (graph == null) {
+            return;
+        }
+        
+        String start = (String) this.jStartBox.getSelectedItem();
+        String end = (String) this.jDesBox.getSelectedItem();
+        Integer depth = Integer.parseInt( this.jDepthText.getText() );
+        
+        graph.setMaxDepth(depth);
+        graph.travel(start, end);
+
+        this.insertDataToTable(graph.getTable(), jProcessTable);
+    }//GEN-LAST:event_jSearchingBtnActionPerformed
+
+    private void jImportGraphBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jImportGraphBtnActionPerformed
+        
+        ImportFile fileChooser = new ImportFile();
+        fileChooser.observe(this);
+        fileChooser.setLocationRelativeTo(null);
+        fileChooser.setVisible(true);
+        
+    }//GEN-LAST:event_jImportGraphBtnActionPerformed
+
+    private void insertDataToTable(ArrayList<ArrayList<String>> data, JTable toTable) {
+
+        int stt = 1;
+       
+        var tableModel = (DefaultTableModel) toTable.getModel();
+        tableModel.setRowCount(0);
+        for (var row : data) {
+            String[] rowData = new String[]{
+                stt + "",
+                row.get(0),
+                row.get(1),
+                row.get(2),
+                row.get(3),
+                row.get(4),};
+            stt++;
+            tableModel.addRow(rowData);
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -155,16 +221,24 @@ public class App extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(App.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(App.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(App.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(App.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(App.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -185,4 +259,19 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JButton jSearchingBtn;
     private javax.swing.JComboBox<String> jStartBox;
     // End of variables declaration//GEN-END:variables
+
+    private IDS graph;
+    @Override
+    public void update(File file) {
+        
+        ParserFile parserFile = new ParserFile(file);
+       
+        this.graph =  parserFile.getGraph();
+        
+        // co danh sach cac nut:
+        var listNode = this.graph.get().keySet();
+        this.jStartBox.setModel( new DefaultComboBoxModel(listNode.toArray()) );        
+        this.jDesBox.setModel( new DefaultComboBoxModel(listNode.toArray()) );
+        
+    }
 }
