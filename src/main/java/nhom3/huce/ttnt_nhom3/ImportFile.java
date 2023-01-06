@@ -8,7 +8,7 @@ package nhom3.huce.ttnt_nhom3;
  *
  * @author Admin
  */
-public class ImportFile extends javax.swing.JFrame implements Observer{
+public class ImportFile extends javax.swing.JFrame implements Observer {
 
     /**
      * Creates new form ImportFile
@@ -16,7 +16,7 @@ public class ImportFile extends javax.swing.JFrame implements Observer{
     public ImportFile() {
         initComponents();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -101,6 +101,7 @@ public class ImportFile extends javax.swing.JFrame implements Observer{
     // End of variables declaration//GEN-END:variables
 
     private Subject subject;
+
     @Override
     public void observe(Subject subject) {
         this.subject = subject;
@@ -113,6 +114,9 @@ public class ImportFile extends javax.swing.JFrame implements Observer{
 
     @Override
     public void notifySubject() {
-        this.subject.update(this.jFileChooser1.getSelectedFile());
+        var file = this.jFileChooser1.getSelectedFile();
+        if (file != null) {
+            this.subject.update(file);
+        }
     }
 }

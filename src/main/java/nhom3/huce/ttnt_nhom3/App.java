@@ -159,7 +159,7 @@ public class App extends javax.swing.JFrame implements Subject{
 
         getContentPane().add(jPanel5, java.awt.BorderLayout.CENTER);
 
-        pack();
+        setSize(new java.awt.Dimension(878, 493));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -174,9 +174,11 @@ public class App extends javax.swing.JFrame implements Subject{
         Integer depth = Integer.parseInt( this.jDepthText.getText() );
         
         graph.setMaxDepth(depth);
-        graph.travel(start, end);
+        this.jResultArea.setText(graph.travel(start, end));
 
         this.insertDataToTable(graph.getTable(), jProcessTable);
+        graph.reset();
+        
     }//GEN-LAST:event_jSearchingBtnActionPerformed
 
     private void jImportGraphBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jImportGraphBtnActionPerformed

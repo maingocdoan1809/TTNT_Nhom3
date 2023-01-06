@@ -39,6 +39,7 @@ public class IDS {
         this.maxDepth = maxDepth;
         nodes = new HashMap<>();
         this.table = new ArrayList<>();
+        this.visited = new HashSet<>();
     }
     public IDS() {
         this(0);
@@ -108,7 +109,30 @@ public class IDS {
         
         return this.nodes;
     }
-
+    private String getParent(String child) {
+        for (var node : this.nodes.keySet()) {
+            if ( this.nodes.get(node).contains(child)) {
+                return node;
+            }
+        }
+        return "none";
+    }
+    private String getPath(String start, String dest) {
+        if ( visited.contains(dest) ) {
+            String pathStr = dest; 
+            String parent = "";
+            do {
+                parent = getParent(dest);
+                if (parent.equals("none")) {
+                    break;
+                }
+                pathStr = parent + " -> " + pathStr;
+                dest = parent;
+            } while( true );
+            return pathStr;
+        }
+        return errorPath;
+    }
     /**
      *
      * @param start : {@code node} bắt đầu
@@ -118,12 +142,17 @@ public class IDS {
     public String travel(String start, String dest) {
         this.path = errorPath;
         this.queue = new ArrayDeque<>();
-        this.visited = new HashSet<>();
         queue.addFirst(new Pair(start, 0));
-        travelHelper(dest, " ", queue, visited);
-        return this.path;
+        travelHelper(dest, queue, visited);
+        // reset state for another searching:
+        return getPath(start, dest);
     }
-
+    public void reset() {
+        
+        this.queue = new ArrayDeque<Pair>();
+        this.visited = new HashSet<>();
+        this.table = new ArrayList<>();
+    }
     /**
      *
      * @param dest
@@ -131,7 +160,7 @@ public class IDS {
      * @param queue
      * @param visited
      */
-    private void travelHelper(String dest, String path,
+    private void travelHelper(String dest,
             ArrayDeque<Pair> queue,
             HashSet<String> visited) {
 
@@ -146,7 +175,6 @@ public class IDS {
         visited.add(start);
 
         if ((currDepth - 1) == this.maxDepth) {
-            this.path = errorPath;
             return;
         }
         var children = this.nodes.get(start);
@@ -188,12 +216,11 @@ public class IDS {
         if (dest.equals(start)) {
             this.table.add(new ArrayList<>(List.of(dest, currDepth + "",
                     childrenString, openString, closeString)));
-            this.path = path;
             return;
         }
         if (queue.size() != 0) {
             this.table.add(step);
-            travelHelper(dest, start + " -> " + path, queue, visited);
+            travelHelper(dest, queue, visited);
         }
     }
     // tim kiem sau de tim duong di:
