@@ -41,6 +41,7 @@ public class IDS {
         this.table = new ArrayList<>();
         this.visited = new HashSet<>();
     }
+
     public IDS() {
         this(0);
     }
@@ -49,7 +50,7 @@ public class IDS {
      * *
      *
      * @param maxDepth : set {@code maxDepth} mới nếu như {@code maxDepth} cũ
-     * không cho ra kết quả.
+     *                 không cho ra kết quả.
      */
     public void setMaxDepth(int maxDepth) {
         this.table = new ArrayList<>();
@@ -60,7 +61,7 @@ public class IDS {
      * Thêm một {@code node} con cho {@code rootName}, một chiều từ
      * {@code rootName} -> {@code childName}
      *
-     * @param rootName : tên {@code node} gốc
+     * @param rootName  : tên {@code node} gốc
      * @param childName : tên {@code node} con của node {@code rootName}
      *
      */
@@ -76,10 +77,10 @@ public class IDS {
 
     /**
      * @see {@link #addNode(String, String)}
-     * @param rootName : tên {@code node} gốc
+     * @param rootName  : tên {@code node} gốc
      * @param childName : tên {@code node} con của node {@code rootName}
-     * @param directed : nếu directed = true, đường nối giữa {@code rootName}
-     * {@code childName} sẽ là 2 chiều
+     * @param directed  : nếu directed = true, đường nối giữa {@code rootName}
+     *                  {@code childName} sẽ là 2 chiều
      */
     public void addNode(String rootName, String childName,
             boolean directed) {
@@ -105,38 +106,53 @@ public class IDS {
      * @return : trả về danh sách các {@code node} trong đồ thị
      */
     public HashMap<String, HashSet<String>> get() {
-        // tên của các nút trong đỉnh = 
-        
+        // tên của các nút trong đỉnh =
+
         return this.nodes;
     }
+
     private String getParent(String child) {
         for (var node : this.nodes.keySet()) {
-            if ( this.nodes.get(node).contains(child)) {
+            if (this.nodes.get(node).contains(child)) {
                 return node;
             }
         }
         return "none";
     }
-    private String getPath(String start, String dest) {
-        if ( visited.contains(dest) ) {
-            String pathStr = dest; 
+
+    /**
+     * 
+     * @param dest : lấy đường đi đến {@code dest}
+     * @return
+     */
+    private String getPath(String dest) {
+        // xác định xem có đường đi đến dest hay không
+        if (visited.contains(dest)) {
+            // nếu có
+            String pathStr = dest;
             String parent = "";
             do {
+                // lấy tên nút cha mà có con là {@code dest}
                 parent = getParent(dest);
+                // nếu parent == none tức là đã đến nút gốc.
                 if (parent.equals("none")) {
                     break;
                 }
+                // lưu vết đường đi
                 pathStr = parent + " -> " + pathStr;
+                // lặp lại quá trình nhưng dest bây giờ là parent của dest.
                 dest = parent;
-            } while( true );
+            } while (true);
             return pathStr;
         }
+        // nếu không có trả về lỗi.
         return errorPath;
     }
+
     /**
      *
      * @param start : {@code node} bắt đầu
-     * @param dest : {@code node} kết thúc
+     * @param dest  : {@code node} kết thúc
      * @return đường đi từ start -> dest
      */
     public String travel(String start, String dest) {
@@ -145,14 +161,16 @@ public class IDS {
         queue.addFirst(new Pair(start, 0));
         travelHelper(dest, queue, visited);
         // reset state for another searching:
-        return getPath(start, dest);
+        return getPath(dest);
     }
+
     public void reset() {
-        
+
         this.queue = new ArrayDeque<Pair>();
         this.visited = new HashSet<>();
         this.table = new ArrayList<>();
     }
+
     /**
      *
      * @param dest
@@ -183,10 +201,10 @@ public class IDS {
             childrenString += child + ", ";
             if (!visited.contains(child)) {
                 var childPair = new Pair(child, currDepth + 1);
-                if ( !queue.contains(childPair) ) {
+                if (!queue.contains(childPair)) {
                     queue.addLast(childPair);
                 }
-                
+
             }
         }
 
@@ -218,11 +236,18 @@ public class IDS {
                     childrenString, openString, closeString)));
             return;
         }
+        /**
+         * Thuật toán tìm kiếm sâu dần:
+         * Áp dụng thuật toán tìm kiếm rộng, nhưng giới hạn độ sâu nhất định
+         */
         if (queue.size() != 0) {
             this.table.add(step);
+            // tìm kiếm theo chiều rộng, gọi lại hàm travelHelper nhưng với
+            // giá trị khác của queue.
             travelHelper(dest, queue, visited);
         }
     }
+
     // tim kiem sau de tim duong di:
     public static void main(String[] args) {
         IDS tree = new IDS(2);
@@ -243,7 +268,7 @@ public class IDS {
             System.out.print(" Close: " + row.get(4));
             System.out.println();
         }
-        
+
         System.out.println("Ten cac dinh");
         var nodeName = tree.get().keySet();
         for (String node : nodeName) {
